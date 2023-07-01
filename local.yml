@@ -4,25 +4,73 @@
   become: true
 
   pre_tasks:
-    - name: update repositories
-      apt:
-        update_cache: yes
-      changed_when: False
+      - name: Load Environment Variables
+        ansible.builtin.include_vars:
+            file: env_local
+            name: env
+
+      - name: Set time zone to {{env.TZ}}
+        ansible.builtin.timezone:
+            name: '{{env.TZ}}'
+
+      - name: Update Package Cache - Ubuntu
+        ansible.builtin.apt:
+            update_cache: yes
+        when: ansible_distribution == 'Ubuntu'
+        changed_when: false
+
+      - name: Update Package Cache - Fedora
+        ansible.builtin.dnf:
+            update_cache: yes
+        when: ansible_distribution == 'Fedora'
+        changed_when: false
+
+      - name: Upgrade Packages - Ubuntu
+        ansible.builtin.apt:
+            upgrade: dist
+            autoremove: yes
+            autoclean: yes
+        when: ansible_distribution == 'Ubuntu'
+        changed_when: false
+
+      - name: Upgrade Packages - Fedora
+        ansible.builtin.dnf:
+            name: '*'
+            state: latest
+        when: ansible_distribution == 'Fedora'
+        changed_when: false
 
   tasks:
-    - name: install packages
-      package:
-        name:
-          - htop
-          - vim
-          - git
-          - zsh
-    - name: Download get-docker.sh script
-      get_url:
-        url: https://get.docker.com/
-        dest: /tmp/get-docker.sh
-        mode: "u+x"
-        validate_certs: no
+      - name: install packages
+        package:
+            name:
+                - htop
+                - vim
+                - git
+                - fish
+                - sudo
 
-    - name: Execute get-docker.sh script
-      command: /tmp/get-docker.sh
+      - name: Set password for user {{env.USER}}
+        user:
+            name: '{{ env.USER }}'
+            password: "{{ '{{env.USER_PASSWORD}}' | password_hash('sha512') }}"
+            shell: /usr/bin/fish
+            createhome: yes
+            state: present
+
+      - name: Add user to sudoers
+        ansible.builtin.lineinfile:
+            dest: /etc/sudoers
+            line: 'your_username ALL=(ALL) NOPASSWD: ALL'
+            validate: visudo # Optional, validate syntax before writing
+
+
+      # - name: Download get-docker.sh script
+      #   get_url:
+      #       url: https://get.docker.com/
+      #       dest: /tmp/get-docker.sh
+      #       mode: 'u+x'
+      #       validate_certs: no
+
+      # - name: Execute get-docker.sh script
+      #   command: /tmp/get-docker.sh
