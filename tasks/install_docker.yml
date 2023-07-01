@@ -1,0 +1,9 @@
+- name: Download get-docker.sh script
+  get_url:
+    url: https://get.docker.com/
+    dest: /tmp/get-docker.sh
+    mode: "u+x"
+    validate_certs: no
+
+- name: Execute get-docker.sh script
+  command: /tmp/get-docker.sh

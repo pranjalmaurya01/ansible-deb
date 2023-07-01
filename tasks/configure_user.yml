@@ -1,0 +1,12 @@
+- name: Configure user {{env.USER}}
+  user:
+    name: "{{ env.USER }}"
+    password: "{{ '{{env.USER_PASSWORD}}' | password_hash('sha512') }}"
+    shell: /usr/bin/fish
+    createhome: yes
+    state: present
+
+- name: Add {{env.USER}} to sudoers
+  ansible.builtin.lineinfile:
+    dest: /etc/sudoers
+    line: "{{env.USER}} ALL=(ALL) NOPASSWD: ALL"

@@ -1,0 +1,35 @@
+- name: Load Environment Variables
+  ansible.builtin.include_vars:
+    file: env_local
+    name: env
+
+- name: Set time zone to {{env.TZ}}
+  ansible.builtin.timezone:
+    name: "{{env.TZ}}"
+
+- name: Update Package Cache - Ubuntu
+  ansible.builtin.apt:
+    update_cache: yes
+  when: ansible_distribution == 'Ubuntu'
+  changed_when: false
+
+- name: Update Package Cache - Fedora
+  ansible.builtin.dnf:
+    update_cache: yes
+  when: ansible_distribution == 'Fedora'
+  changed_when: false
+
+- name: Upgrade Packages - Ubuntu
+  ansible.builtin.apt:
+    upgrade: dist
+    autoremove: yes
+    autoclean: yes
+  when: ansible_distribution == 'Ubuntu'
+  changed_when: false
+
+- name: Upgrade Packages - Fedora
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+  when: ansible_distribution == 'Fedora'
+  changed_when: false
