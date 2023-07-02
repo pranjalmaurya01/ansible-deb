@@ -1,7 +1,7 @@
 - name: Configure user {{env.USER}}
   user:
     name: "{{ env.USER }}"
-    password: "{{ '{{env.USER_PASSWORD}}' | password_hash('sha512') }}"
+    password: "{{ '{{env.USER_PASSWORD}}' | password_hash('sha512', '{{env.PASSWORD_SALT}}')' }}"
     shell: /usr/bin/fish
     createhome: yes
     state: present

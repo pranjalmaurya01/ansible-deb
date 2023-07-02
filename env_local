@@ -1,5 +1,6 @@
 {
   "TZ": "Asia/Kolkata",
   "USER": "ram",
-  "USER_PASSWORD": "test"
+  "USER_PASSWORD": "test",
+  "PASSWORD_SALT": "my_secret_salt"
 }

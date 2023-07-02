@@ -1,4 +1,4 @@
-- name: install packages
+- name: Install packages
   package:
     name:
       - htop
@@ -6,3 +6,4 @@
       - git
       - fish
       - sudo
+  changed_when: false

@@ -7,3 +7,12 @@
 
 - name: Execute get-docker.sh script
   command: /tmp/get-docker.sh
+
+- name: Enable Docker service
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Add user {{ env.USER }} to the docker group
+  shell: sudo usermod -aG docker {{ env.USER }}
