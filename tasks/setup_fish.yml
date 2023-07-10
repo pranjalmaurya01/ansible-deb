@@ -1,0 +1,4 @@
+- name: Clone fish configuration repository
+  git:
+    repo: https://github.com/pranjalmaurya01/fish.git
+    dest: /home/{{ env.USER }}/.config

@@ -1,0 +1,18 @@
+- name: Generate SSH keypair
+  openssh_keypair:
+    path: /home/{{ env.USER }}/.ssh/id_rsa
+    type: rsa
+    size: 4096
+    state: present
+
+- name: Fix owner of the generated pub key
+  file:
+    path: /home/{{ env.USER }}/.ssh/id_rsa.pub
+    owner: "{{ env.USER }}"
+    group: "{{ env.USER }}"
+
+- name: Fix owner of the generated private key
+  file:
+    path: /home/{{ env.USER }}/.ssh/id_rsa
+    owner: "{{ env.USER }}"
+    group: "{{ env.USER }}"
