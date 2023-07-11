@@ -1,3 +1,15 @@
+- name: Check if .ssh directory exists
+  stat:
+    path: /home/{{ env.USER }}/.ssh
+  register: ssh_dir
+
+- name: Create .ssh directory
+  file:
+    path: /home/{{ env.USER }}/.ssh
+    state: directory
+    owner: "{{ env.USER }}"
+  when: not ssh_dir.stat.exists
+
 - name: Generate SSH keypair
   openssh_keypair:
     path: /home/{{ env.USER }}/.ssh/id_rsa
